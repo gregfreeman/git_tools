@@ -14,6 +14,7 @@ import ConfigParser as cp
 
 
 # change option format for git config files
+# fix parser for leading tabs
 class GitConfigParser(cp.RawConfigParser, object):
 
     OPTCRE = re.compile(
@@ -135,8 +136,9 @@ def main():
         print path
         print url
         deps.append({'url':url,'path':path})
+    data={'needs':deps}
     with open('deps.json', 'w') as outfile:
-        json.dump(deps, outfile, indent=4, sort_keys=True)
+        json.dump(data, outfile, indent=4, sort_keys=True)
 
 if __name__ == '__main__':
     main()

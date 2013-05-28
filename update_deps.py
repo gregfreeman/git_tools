@@ -13,14 +13,19 @@ import json
 
 def main():
     deps=open('deps.json')
-    data=json.loads(deps)
-    for dep in data:
+    data=json.load(deps)
+    for dep in data['needs']:
         url=dep['url']
         path=dep['path']
         if len(path)>0 and len(url)>0 :
             if (not os.path.exists(path)):
-                print 'adding dependency:' + path + ', ' + url
-                os.system('git submodule add  '+url + ' '+path)
+                if dep.has_key('branch'):
+                    branch=dep['branch']
+                    print 'adding dependency:' + path + ', ' + url + ' ,branch:' + branch
+                    os.system('git submodule add -b '+branch+' '+url+' '+path)
+                else:
+                    print 'adding dependency:' + path + ', ' + url
+                    os.system('git submodule add  '+url + ' '+path)
             else:
                 print 'dependency present:' + path
     

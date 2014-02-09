@@ -14,7 +14,7 @@ import argparse, subprocess
 parser = argparse.ArgumentParser(
     formatter_class=argparse.RawDescriptionHelpFormatter,
     usage='%(prog)s file',
-    description='This program clones all repositories specified in a file',
+    description='This program clones all repositories specified in a file as mirrors',
     add_help=False
     ) 
 parser.add_argument('file')
@@ -22,17 +22,22 @@ parser.add_argument('file')
 def main():    
     args = parser.parse_args()
     repos = open(args.file, "r").readlines()
+    basedir=os.getcwd()
     for repo in repos:
         words=repo.strip().split('/')
         parts=words[-1].split('.')
-        folder=parts[0];
+        folder=words[-1];
         if len(folder)>0 :
-            if (not os.path.exists(folder)):
+            print folder
+            if (not os.path.exists(os.path.join(basedir,folder))):
                 print 'cloning repo:' + folder
-                os.system('git clone '+repo)
+                os.chdir(basedir)
+                os.system('git clone --mirror '+repo)
             else:
                 print 'found repo:' + folder
-
+                os.chdir(os.path.join(basedir,folder))
+                os.system('git remote update')
+                os.chdir(basedir)
 
 if __name__ == '__main__':
     main()
